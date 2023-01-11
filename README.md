@@ -12,12 +12,12 @@ Get: Get all list of users ✅
 ## /users/{id}
 
 GET: Get a user by id ✅
-PUT: Update a user by id
-DELETE: Delete a user by id (check if he/she still has a issued book) (is there any fine to be paid)
+PUT: Update a user by id ✅
+DELETE: Delete a user by id (check if he/she still has a issued book) (is there any fine to be paid) ✅
 
 ## /users/subscription-details/{id}
 
-GET: Get user subscription details
+GET: Get user subscription details ✅
 
 1. Date of subscription
 2. Valid till
@@ -25,17 +25,17 @@ GET: Get user subscription details
 
 ## /books
 
-GET: Get all books
-POST: Create/add a new book
+GET: Get all books ✅
+POST: Create/add a new book ✅
 
 ## /book/{id}
 
-GET: Get a book by id
-PUT: Update a book by id
+GET: Get a book by id ✅
+PUT: Update a book by id ✅
 
-## /books/issued
+## /books/issued/by-user
 
-GET: Get all issued books
+GET: Get all issued books ✅
 
 ## /books/issued/withFine
 
@@ -46,6 +46,8 @@ GET: Get all issued books with fine
 Basic (3 months)
 Standard (6 months)
 Premiun (12 months)
+
+NOTE: Date is in the format mm/dd/yyyy
 
 If subscription date is 01/08/22
 and Subscription type is Standard

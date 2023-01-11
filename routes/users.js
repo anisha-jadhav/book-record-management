@@ -1,25 +1,7 @@
 const express = require("express");
-// importing users file
-const { users } = require("./Data/users.json");
+const { users } = require("../data/users.json");
 
-//importing routes
-const usersRouter = require("./routes/users");
-const booksRouter = require("./routes/books");
-
-const app = express();
-
-const port = 8081;
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "Server is up and running.",
-  });
-});
-
-app.use("/users", usersRouter);
-app.use("/books", booksRouter);
+const router = express.Router();
 
 /**
  * Route: /users
@@ -28,7 +10,7 @@ app.use("/books", booksRouter);
  * Access: Public
  * Parameters: none
  */
-app.get("/users", (req, res) => {
+router.get("/", (req, res) => {
   res.status(200).json({
     success: true,
     data: users,
@@ -42,7 +24,7 @@ app.get("/users", (req, res) => {
  * Access: Public
  * Parameters: id
  */
-app.get("/users/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
   const user = users.find((each) => each.id === id);
   if (!user) {
@@ -64,7 +46,7 @@ app.get("/users/:id", (req, res) => {
  * Access: Public
  * Parameters: none
  */
-app.post("/users", (req, res) => {
+router.post("/", (req, res) => {
   const { id, name, surname, email, subscriptionType, subscriptionDate } =
     req.body;
 
@@ -98,7 +80,7 @@ app.post("/users", (req, res) => {
  * Access: Public
  * Parameters: id
  */
-app.put("/users/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
 
@@ -134,8 +116,7 @@ app.put("/users/:id", (req, res) => {
  * Access: Public
  * Parameters: id
  */
-
-app.delete("/users/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
   const user = users.find((each) => each.id === id);
 
@@ -155,12 +136,78 @@ app.delete("/users/:id", (req, res) => {
   });
 });
 
-app.get("*", (req, res) => {
-  res.status(404).json({
-    message: "This route does not exist.",
+/**
+ * Route: /users/subscription-details/:id
+ * Method: GET
+ * Description: Get all user subscription details
+ * Access: Public
+ * Parameters: id
+ */
+router.get("/subscription-details/:id", (req, res) => {
+  const { id } = req.params;
+  const user = users.find((each) => each.id === id);
+
+  if (!user)
+    return res.status(404).json({
+      success: false,
+      message: "User not found with this id ",
+    });
+  let date;
+  const getDateInDays = (data = "") => {
+    if (data === "") {
+      //current date
+      date = new Date();
+    } else {
+      // getting date on basis of data variable
+      date = new Date(data);
+    }
+    let days = Math.floor(date / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const subscriptionType = (date) => {
+    if (user.subscriptionType === "Basic") {
+      date = date + 90;
+    } else if (user.subscriptionType === "Standard") {
+      date = date + 180;
+    } else if (user.subscriptionType === "Premium") {
+      date = date + 365;
+    }
+    return date;
+  };
+
+  // subscription expiration calculation
+  // January 1, 1970, UTC. // milliseconds
+  let returnDate = getDateInDays(user.returnDate);
+  let currentDate = getDateInDays();
+  let subscriptionDate = getDateInDays(user.subscriptionDate);
+  let subscriptionExpiration = subscriptionType(subscriptionDate);
+
+  console.log("Return Date ", returnDate);
+  console.log("Current Date ", currentDate);
+  console.log("Subscription Date ", subscriptionDate);
+  console.log("Subscription expiry date", subscriptionExpiration);
+
+  const data = {
+    ...user,
+    subscriptionExpired: subscriptionExpiration < currentDate,
+    daysLeftForExpiration:
+      subscriptionExpiration <= currentDate
+        ? 0
+        : subscriptionExpiration - currentDate,
+    fine:
+      returnDate < currentDate
+        ? subscriptionExpiration <= currentDate
+          ? 200
+          : 100
+        : 0,
+  };
+
+  res.status(200).json({
+    success: true,
+    data,
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at port ${port}`);
-});
+// default export
+module.exports = router;
