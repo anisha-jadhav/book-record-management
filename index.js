@@ -6,6 +6,8 @@ const usersRouter = require("./routes/users");
 const booksRouter = require("./routes/books");
 const DbConnection = require("./databaseConnection");
 
+const { UserModel, BookModel } = require("./models");
+
 dotenv.config();
 
 const app = express();
