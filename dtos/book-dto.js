@@ -1,4 +1,4 @@
-// Data Tranform Object
+// Data Transform Object
 
 class IssuedBook {
   _id;

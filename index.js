@@ -27,6 +27,8 @@ app.get("/", (req, res) => {
 app.use("/users", usersRouter);
 app.use("/books", booksRouter);
 
+// for all other routes that are not mentioned here
+
 app.get("*", (req, res) => {
   res.status(404).json({
     message: "This route does not exist.",
@@ -36,3 +38,9 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running at port ${port}`);
 });
+
+
+
+
+
+// npm run dev

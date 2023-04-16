@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-mongoose.set("strictQuery", true);
 function DbConnection() {
   const DB_URL = process.env.MONGO_URI;
 
